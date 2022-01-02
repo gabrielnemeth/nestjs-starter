@@ -1,0 +1,21 @@
+version: '3'
+services:
+    e2e-db:
+        image: mongo:latest
+        restart: unless-stopped
+        container_name: nestjs-e2e-db
+        ports:
+            - "27018:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: admin
+            MONGO_INITDB_ROOT_PASSWORD: admin
+            MONGO_INITDB_DATABASE: app
+        volumes:
+            - nestjs-e2e-db-vol:/data/db
+            - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/:ro
+        networks:
+            - nestjs-e2e-network
+volumes:
+    nestjs-e2e-db-vol:
+networks:
+    nestjs-e2e-network:

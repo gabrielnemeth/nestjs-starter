@@ -1,29 +1,41 @@
 import {INestApplication} from '@nestjs/common';
+import {ConfigModule, ConfigService} from '@nestjs/config';
+import {MongooseModule} from '@nestjs/mongoose';
 import {Test} from '@nestjs/testing';
 import * as request from 'supertest';
+import {envValidationSchema} from '../src/config/env-validation-schema';
 import {UsersModule} from '../src/users/users.module';
-import {UsersService} from '../src/users/users.service';
 
 describe('Users', () => {
     let app: INestApplication;
-    const usersService = {findAll: (): string[] => ['test']};
 
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
-            imports: [UsersModule],
-        })
-            .overrideProvider(UsersService)
-            .useValue(usersService)
-            .compile();
+            imports: [
+                ConfigModule.forRoot({
+                    isGlobal: true,
+                    validationSchema: envValidationSchema,
+                }),
+                MongooseModule.forRootAsync({
+                    imports: [ConfigModule],
+                    useFactory: async (configService: ConfigService) => ({
+                        uri: configService.get('DB_TEST_URI'),
+                    }),
+                    inject: [ConfigService],
+                }),
+                UsersModule,
+            ],
+        }).compile();
 
         app = moduleRef.createNestApplication();
         await app.init();
     });
 
-    it(`/GET users`, () => {
-        return request(app.getHttpServer()).get('/users').expect(200).expect({
-            data: usersService.findAll(),
-        });
+    it(`/POST new user`, () => {
+        return request(app.getHttpServer())
+            .post('/users')
+            .send({email: 'hello@mail.com', password: 'secret'})
+            .expect(201);
     });
 
     afterAll(async () => {

@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     ConflictException,
     Injectable,
     Logger,
@@ -33,11 +34,15 @@ export class UsersService {
 
     public async findOne(id: string): Promise<User> {
         if (!isValidObjectId(id)) {
+            throw new BadRequestException(`wrong user id was provided`);
+        }
+        const user = await this.userModel.findById(id).lean().exec();
+        if (isNil(user)) {
             throw new NotFoundException(
-                `user with the id of ${id} does not exists`
+                `user with the id ${id} does not exists`
             );
         }
-        return this.userModel.findById(id).lean();
+        return user;
     }
 
     private async exists(email: string): Promise<boolean> {

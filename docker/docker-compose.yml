@@ -1,0 +1,21 @@
+version: '3'
+services:
+    db:
+        image: mongo:latest
+        restart: unless-stopped
+        container_name: nestjs-db
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: admin
+            MONGO_INITDB_ROOT_PASSWORD: admin
+            MONGO_INITDB_DATABASE: app
+        volumes:
+            - nestjs-db-vol:/data/db
+            - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/:ro
+        networks:
+            - nestjs-network
+volumes:
+    nestjs-db-vol:
+networks:
+    nestjs-network:
