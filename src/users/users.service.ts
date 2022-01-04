@@ -34,7 +34,7 @@ export class UsersService {
 
     public async findOne(id: string): Promise<User> {
         if (!isValidObjectId(id)) {
-            throw new BadRequestException(`wrong user id was provided`);
+            throw new BadRequestException('wrong user id was provided');
         }
         const user = await this.userModel.findById(id).lean().exec();
         if (isNil(user)) {
