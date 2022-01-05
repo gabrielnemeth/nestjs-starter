@@ -43,8 +43,8 @@ describe('UserController', () => {
                 .spyOn(service, 'create')
                 .mockResolvedValueOnce(mockUser);
 
-            await controller.create(createUserDto);
-            expect(createSpy).toHaveBeenCalledWith(createUserDto);
+            await controller.register(createUserDto);
+            expect(createSpy).toHaveBeenCalled();
         });
     });
 

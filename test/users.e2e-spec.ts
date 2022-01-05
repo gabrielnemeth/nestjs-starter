@@ -42,7 +42,7 @@ describe('Users', () => {
         describe('when new user is posted', () => {
             it(`should create a new user and the returned id property should be without _`, () => {
                 return request(app.getHttpServer())
-                    .post('/users')
+                    .post('/register')
                     .send({email: 'hello@mail.com', password: 'secret'})
                     .expect(201)
                     .then(data => {
@@ -56,7 +56,7 @@ describe('Users', () => {
         describe('when existing user is posted', () => {
             it(`should throw an exception`, () => {
                 return request(app.getHttpServer())
-                    .post('/users')
+                    .post('/register')
                     .send({email: 'hello@mail.com', password: 'secret'})
                     .expect({
                         statusCode: 409,
