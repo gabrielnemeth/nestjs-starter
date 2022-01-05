@@ -2,9 +2,14 @@ import {Exclude, Expose, Transform} from 'class-transformer';
 import {ObjectId} from 'mongoose';
 
 export class UserResponse {
+    @Exclude()
+    public _id: ObjectId;
+
     @Expose()
     @Transform(params => params.obj._id.toString())
-    public _id: ObjectId;
+    public get id(): ObjectId {
+        return this._id;
+    }
 
     public email: string;
 
