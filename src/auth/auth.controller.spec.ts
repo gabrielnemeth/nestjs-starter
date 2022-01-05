@@ -1,11 +1,17 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import * as mongoose from 'mongoose';
-import {UsersController} from './users.controller';
-import {UsersService} from './users.service';
+import {CreateUserDto} from '../users/create-user.dto';
+import {UsersService} from '../users/users.service';
+import {AuthController} from './auth.controller';
 
-describe('UserController', () => {
-    let controller: UsersController;
+describe('AuthController', () => {
+    let controller: AuthController;
     let service: UsersService;
+
+    const createUserDto: CreateUserDto = {
+        email: 'hello@mail.com',
+        password: 'secret',
+    };
 
     const mockUser = {
         email: 'hello@mail.com',
@@ -15,6 +21,7 @@ describe('UserController', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
+            controllers: [AuthController],
             providers: [
                 {
                     provide: UsersService,
@@ -24,20 +31,23 @@ describe('UserController', () => {
                     },
                 },
             ],
-            controllers: [UsersController],
         }).compile();
 
-        controller = module.get<UsersController>(UsersController);
+        controller = module.get<AuthController>(AuthController);
         service = module.get<UsersService>(UsersService);
     });
 
-    describe('findOne', () => {
-        it('should return one user', async () => {
+    it('should be defined', () => {
+        expect(controller).toBeDefined();
+    });
+
+    describe('register', () => {
+        it('should create a new user', async () => {
             const createSpy = jest
-                .spyOn(service, 'findOne')
+                .spyOn(service, 'create')
                 .mockResolvedValueOnce(mockUser);
 
-            await controller.findOne(new mongoose.Types.ObjectId().toString());
+            await controller.register(createUserDto);
             expect(createSpy).toHaveBeenCalled();
         });
     });

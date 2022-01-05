@@ -2,6 +2,7 @@ import {Module} from '@nestjs/common';
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {MongooseModule} from '@nestjs/mongoose';
 import {AppController} from './app.controller';
+import {AuthModule} from './auth/auth.module';
 import {envValidationSchema} from './config/env-validation-schema';
 import {UsersModule} from './users/users.module';
 
@@ -19,6 +20,7 @@ import {UsersModule} from './users/users.module';
             inject: [ConfigService],
         }),
         UsersModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [],
