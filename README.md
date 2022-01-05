@@ -1,73 +1,64 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Nestjs Starter
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
+## Installation - npm
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## Required env variables
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```dotenv
+# add .env file into the app root
+# example env file:
+# DB_URI mongodb application database connection string
+DB_URI=mongodb://user:password@localhost:27017/dbname
+# DB_TEST_URI mongodb testing database connection string
+DB_TEST_URI=mongodb://user:password@localhost:27018/testingdbname
 ```
 
-## Test
+## Setting up a mongodb
 
-```bash
-# unit tests
-$ npm run test
+The easiest way to set up a mongodb is through docker. If you have docker installed, running `npm run start:dev:docker`
+will start a mongodb by default. The mongodb configuration is located in `./docker/docker-compose.yml` file:
 
-# e2e tests
-$ npm run test:e2e
+```
+version: '3'
+services:
+    db:
+        image: mongo:latest
+        restart: unless-stopped
+        container_name: nestjs-db
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: admin
+            MONGO_INITDB_ROOT_PASSWORD: admin
+            MONGO_INITDB_DATABASE: app
+        volumes:
+            - nestjs-db-vol:/data/db
+            # set up a new user and add roles
+            - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/:ro
+        networks:
+            - nestjs-network
+volumes:
+    nestjs-db-vol:
+networks:
+    nestjs-network:
 
-# test coverage
-$ npm run test:cov
 ```
 
-## Support
+## Starting the app
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+App can be started with `npm run start:dev` or with `npm run start:dev:docker`. `npm run start:dev` won't start a docker
+container with a mongodb.
 
-## Stay in touch
+## Testing
 
--   Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
--   Website - [https://nestjs.com](https://nestjs.com/)
--   Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+The app uses both unit and integration testing. To start unit testing run `npm run test:watch` command. The
+integration test can be started with `npm run test:e2e:watch`. It will automatically set up a docker with
+a mongodb testing database. It's configuration can be found in `./docker/docker-compose.yml` file. Note that
+after ending the e2e test process the docker container is not automatically stopped. You have to run the
+`npm run docker:down:e2e` command to do so.
