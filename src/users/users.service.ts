@@ -45,6 +45,16 @@ export class UsersService {
         return user;
     }
 
+    public async findOneByEmail(email: string): Promise<User> {
+        const user = await this.userModel.findOne({email}).lean().exec();
+        if (isNil(user)) {
+            throw new NotFoundException(
+                `user with the ${email} email does not exists`
+            );
+        }
+        return user;
+    }
+
     private async exists(email: string): Promise<boolean> {
         const user = await this.userModel.findOne({email});
         return !isNil(user);
