@@ -1,3 +1,4 @@
+import {ConfigService} from '@nestjs/config';
 import {Test, TestingModule} from '@nestjs/testing';
 import * as mongoose from 'mongoose';
 import {CreateUserDto} from '../users/create-user.dto';
@@ -7,7 +8,7 @@ import {AuthService} from './auth.service';
 
 describe('AuthController', () => {
     let controller: AuthController;
-    let service: AuthService;
+    let authService: AuthService;
 
     const createUserDto: CreateUserDto = {
         email: 'hello@mail.com',
@@ -34,11 +35,17 @@ describe('AuthController', () => {
                     provide: UsersService,
                     useValue: {},
                 },
+                {
+                    provide: ConfigService,
+                    useValue: {
+                        get: jest.fn().mockReturnValue(600),
+                    },
+                },
             ],
         }).compile();
 
         controller = module.get<AuthController>(AuthController);
-        service = module.get<AuthService>(AuthService);
+        authService = module.get<AuthService>(AuthService);
     });
 
     it('should be defined', () => {
@@ -48,7 +55,7 @@ describe('AuthController', () => {
     describe('register', () => {
         it('should create a new user', async () => {
             const createSpy = jest
-                .spyOn(service, 'register')
+                .spyOn(authService, 'register')
                 .mockResolvedValueOnce(mockUser);
 
             await controller.register(createUserDto);

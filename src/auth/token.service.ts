@@ -6,8 +6,12 @@ import {JwtService} from '@nestjs/jwt';
 export class TokenService {
     private accessSecret = this.configService.get('JWT_ACCESS_SECRET_KEY');
     private refreshSecret = this.configService.get('JWT_REFRESH_SECRET_KEY');
-    private accessExpiresIn = this.configService.get('JWT_ACCESS_EXPIRE_IN');
-    private refreshExpiresIn = this.configService.get('JWT_REFRESH_EXPIRE_IN');
+    private accessExpiresIn = this.configService.get(
+        'JWT_ACCESS_EXPIRE_IN_SECONDS'
+    );
+    private refreshExpiresIn = this.configService.get(
+        'JWT_REFRESH_EXPIRE_IN_SECONDS'
+    );
 
     public constructor(
         private jwtService: JwtService,

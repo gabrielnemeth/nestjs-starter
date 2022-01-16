@@ -5,7 +5,6 @@ export type UserDocument = User & Document;
 
 @Schema()
 export class User {
-    @Prop({type: Types.ObjectId})
     public _id: Types.ObjectId;
 
     @Prop({type: String, required: true})

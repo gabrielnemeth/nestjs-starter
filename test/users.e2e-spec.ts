@@ -3,9 +3,11 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
 import {Reflector} from '@nestjs/core';
 import {getConnectionToken, MongooseModule} from '@nestjs/mongoose';
 import {Test} from '@nestjs/testing';
+import * as cookieParser from 'cookie-parser';
 import {Connection} from 'mongoose';
 import * as mongoose from 'mongoose';
 import * as request from 'supertest';
+import {AuthModule} from '../src/auth/auth.module';
 import {envValidationSchema} from '../src/config/env-validation-schema';
 import {UsersModule} from '../src/users/users.module';
 
@@ -28,13 +30,19 @@ describe('Users', () => {
                     inject: [ConfigService],
                 }),
                 UsersModule,
+                AuthModule,
             ],
         }).compile();
 
         app = moduleRef.createNestApplication();
+        const configService = app.get(ConfigService);
+        const frontendBaseUrl = configService.get('FRONTEND_BASE_URL');
+
         app.useGlobalInterceptors(
             new ClassSerializerInterceptor(app.get(Reflector))
         );
+        app.use(cookieParser());
+        app.enableCors({credentials: true, origin: frontendBaseUrl});
         await app.init();
     });
 
@@ -42,8 +50,8 @@ describe('Users', () => {
         describe('when new user is posted', () => {
             it(`should create a new user and the returned id property should be without _`, () => {
                 return request(app.getHttpServer())
-                    .post('/register')
-                    .send({email: 'hello@mail.com', password: 'secret'})
+                    .post('/auth/register')
+                    .send({email: 'hello@mail.com', password: 'secret1234'})
                     .expect(201)
                     .then(data => {
                         const body = data.body;
@@ -56,7 +64,7 @@ describe('Users', () => {
         describe('when existing user is posted', () => {
             it(`should throw an exception`, () => {
                 return request(app.getHttpServer())
-                    .post('/register')
+                    .post('/auth/register')
                     .send({email: 'hello@mail.com', password: 'secret'})
                     .expect({
                         statusCode: 409,
