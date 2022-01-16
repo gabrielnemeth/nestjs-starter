@@ -3,10 +3,14 @@ import * as bcrypt from 'bcrypt';
 import {CreateUserDto} from '../users/create-user.dto';
 import {User} from '../users/user.schema';
 import {UsersService} from '../users/users.service';
+import {TokenService} from './token.service';
 
 @Injectable()
 export class AuthService {
-    public constructor(private usersService: UsersService) {}
+    public constructor(
+        private usersService: UsersService,
+        private tokenService: TokenService
+    ) {}
 
     public async register(createUserDto: CreateUserDto): Promise<User> {
         const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
@@ -14,6 +18,14 @@ export class AuthService {
             ...createUserDto,
             password: hashedPassword,
         });
+    }
+
+    public async generateTokens(
+        id: string
+    ): Promise<{access: string; refresh: string}> {
+        const access = await this.tokenService.generateAccessToken(id);
+        const refresh = await this.tokenService.generateRefreshToken(id);
+        return {access, refresh};
     }
 
     public async validateUser(

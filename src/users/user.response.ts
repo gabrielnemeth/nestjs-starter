@@ -1,13 +1,13 @@
 import {Exclude, Expose, Transform} from 'class-transformer';
-import {ObjectId} from 'mongoose';
+import {Types} from 'mongoose';
 
 export class UserResponse {
     @Exclude()
-    public _id: ObjectId;
+    public _id: Types.ObjectId;
 
     @Expose()
     @Transform(params => params.obj._id.toString())
-    public get id(): ObjectId {
+    public get id(): Types.ObjectId {
         return this._id;
     }
 

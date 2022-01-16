@@ -1,6 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import * as mongoose from 'mongoose';
 import {CreateUserDto} from '../users/create-user.dto';
+import {UsersService} from '../users/users.service';
 import {AuthController} from './auth.controller';
 import {AuthService} from './auth.service';
 
@@ -28,6 +29,10 @@ describe('AuthController', () => {
                     useValue: {
                         register: jest.fn(),
                     },
+                },
+                {
+                    provide: UsersService,
+                    useValue: {},
                 },
             ],
         }).compile();
