@@ -7,8 +7,8 @@ import {AppModule} from './app.module';
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
-    const globalPrefix = 'api';
     const frontendBaseUrl = configService.get('FRONTEND_BASE_URL');
+    const globalPrefix = 'api';
     const port = process.env.PORT || 3000;
 
     app.setGlobalPrefix(globalPrefix);
