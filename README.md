@@ -17,6 +17,13 @@ $ npm install
 DB_URI=mongodb://user:password@localhost:27017/dbname
 # DB_TEST_URI mongodb testing database connection string
 DB_TEST_URI=mongodb://user:password@localhost:27018/testingdbname
+# JWT config options
+JWT_ACCESS_SECRET_KEY=secret
+JWT_REFRESH_SECRET_KEY=secret2
+JWT_ACCESS_EXPIRE_IN_SECONDS=600
+JWT_REFRESH_EXPIRE_IN_SECONDS=86400
+# Configures the Access-Control-Allow-Origin CORS header
+FRONTEND_BASE_URL=http://localhost:4200
 ```
 
 ## Setting up a mongodb
