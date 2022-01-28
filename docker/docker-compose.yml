@@ -12,6 +12,7 @@ services:
             MONGO_INITDB_DATABASE: app
         volumes:
             - nestjs-db-vol:/data/db
+            - nestjs-db-vol:/data/configdb
             - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/:ro
         networks:
             - nestjs-network
