@@ -46,6 +46,7 @@ services:
             MONGO_INITDB_DATABASE: app
         volumes:
             - nestjs-db-vol:/data/db
+            - nestjs-db-vol:/data/configdb
             # set up a new user and add roles
             - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/:ro
         networks:
